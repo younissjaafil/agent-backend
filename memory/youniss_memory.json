@@ -1,0 +1,16 @@
+[
+  {
+    "user": "hello",
+    "assistant": "I'm youniss, and I'm having trouble processing that right now. Could you try rephrasing?",
+    "timestamp": "2025-06-12T17:49:54.124876",
+    "conversation_id": null,
+    "tool_used": null
+  },
+  {
+    "user": "okay",
+    "assistant": "I'm youniss, and I'm having trouble processing that right now. Could you try rephrasing?",
+    "timestamp": "2025-06-12T17:50:00.239229",
+    "conversation_id": "conv_1749739794.125889",
+    "tool_used": null
+  }
+]
