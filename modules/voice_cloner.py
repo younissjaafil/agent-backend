@@ -193,10 +193,74 @@ class VoiceCloner:
             logger.error(f"❌ Fallback recording failed: {e}")
             return None
 
+    # def upload_audio_file(self, audio_file_path):
+    #     """Upload audio file to MiniMax"""
+    #     try:
+    #         logger.info("📤 Uploading audio file to MiniMax...")
+            
+    #         upload_url = f"https://api.minimaxi.chat/v1/files/upload?GroupId={self.group_id}"
+            
+    #         upload_headers = {
+    #             "Authorization": f"Bearer {self.minimax_api_key}"
+    #         }
+            
+    #         data = {'purpose': 'voice_clone'}
+            
+    #         with open(audio_file_path, 'rb') as audio_file:
+    #             files = {'file': ('audio.wav', audio_file, 'audio/wav')}
+    #             response = requests.post(upload_url, headers=upload_headers, data=data, files=files, timeout=60)
+            
+    #         logger.info(f"📡 Upload response status: {response.status_code}")
+            
+    #         if response.status_code == 200:
+    #             result = response.json()
+                
+    #             file_id = None
+    #             if 'file' in result and 'file_id' in result['file']:
+    #                 file_id = result['file']['file_id']
+    #             elif 'file_id' in result:
+    #                 file_id = result['file_id']
+                
+    #             if file_id:
+    #                 logger.info(f"✅ File uploaded successfully! File ID: {file_id}")
+    #                 return file_id
+    #             else:
+    #                 logger.error(f"❌ No file_id in response: {result}")
+    #                 return None
+    #         else:
+    #             logger.error(f"❌ File upload failed: {response.status_code}")
+    #             return None
+            
+    #     except Exception as e:
+    #         logger.error(f"❌ File upload error: {e}")
+    #         return None
     def upload_audio_file(self, audio_file_path):
         """Upload audio file to MiniMax"""
         try:
             logger.info("📤 Uploading audio file to MiniMax...")
+            
+            # Convert audio to proper format first
+            from pydub import AudioSegment
+            
+            # Load and convert audio
+            audio = AudioSegment.from_file(audio_file_path)
+            
+            # Ensure proper format: WAV, 16-bit, mono, 16kHz or 44.1kHz
+            audio = audio.set_frame_rate(16000)  # MiniMax prefers 16kHz
+            audio = audio.set_channels(1)  # Mono
+            audio = audio.set_sample_width(2)  # 16-bit
+            
+            # Save converted audio
+            converted_path = audio_file_path.replace('.wav', '_converted.wav')
+            audio.export(converted_path, format="wav")
+            
+            # Check duration
+            duration = len(audio) / 1000.0  # Duration in seconds
+            logger.info(f"📊 Audio duration: {duration:.2f} seconds")
+            
+            if duration < 3:
+                logger.error("❌ Audio too short! Need at least 3 seconds")
+                return None
             
             upload_url = f"https://api.minimaxi.chat/v1/files/upload?GroupId={self.group_id}"
             
@@ -206,9 +270,13 @@ class VoiceCloner:
             
             data = {'purpose': 'voice_clone'}
             
-            with open(audio_file_path, 'rb') as audio_file:
+            with open(converted_path, 'rb') as audio_file:
                 files = {'file': ('audio.wav', audio_file, 'audio/wav')}
                 response = requests.post(upload_url, headers=upload_headers, data=data, files=files, timeout=60)
+            
+            # Clean up converted file
+            if os.path.exists(converted_path):
+                os.remove(converted_path)
             
             logger.info(f"📡 Upload response status: {response.status_code}")
             
@@ -228,7 +296,7 @@ class VoiceCloner:
                     logger.error(f"❌ No file_id in response: {result}")
                     return None
             else:
-                logger.error(f"❌ File upload failed: {response.status_code}")
+                logger.error(f"❌ File upload failed: {response.status_code} - {response.text}")
                 return None
             
         except Exception as e:

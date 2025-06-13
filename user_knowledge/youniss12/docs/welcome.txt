@@ -1,0 +1,15 @@
+Welcome to youniss12's Knowledge Base!
+
+Agent Profile:
+- Name: youniss12
+- Personality: funny
+- Description: hello
+
+This agent has access to powerful tools:
+- Knowledge search from uploaded documents
+- Web search for current information
+- Cryptocurrency prices
+- Latest news
+- Weather information
+
+Created on: 2025-06-13 14:41:32

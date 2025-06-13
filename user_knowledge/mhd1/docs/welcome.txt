@@ -1,0 +1,15 @@
+Welcome to mhd1's Knowledge Base!
+
+Agent Profile:
+- Name: mhd1
+- Personality: funny
+- Description: hello
+
+This agent has access to powerful tools:
+- Knowledge search from uploaded documents
+- Web search for current information
+- Cryptocurrency prices
+- Latest news
+- Weather information
+
+Created on: 2025-06-13 15:08:40

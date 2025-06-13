@@ -1,0 +1,86 @@
+[
+  {
+    "user": "hello",
+    "assistant": "I'm youniss12, and I'm having trouble processing that right now. Could you try rephrasing?",
+    "timestamp": "2025-06-13T13:52:45.124181",
+    "conversation_id": null,
+    "tool_used": null
+  },
+  {
+    "user": "heelo\\",
+    "assistant": "I'm youniss12, and I'm having trouble processing that right now. Could you try rephrasing?",
+    "timestamp": "2025-06-13T14:34:27.994607",
+    "conversation_id": null,
+    "tool_used": null
+  },
+  {
+    "user": "hello",
+    "assistant": "I'm youniss12, and I'm having trouble processing that right now. Could you try rephrasing?",
+    "timestamp": "2025-06-13T14:41:37.699364",
+    "conversation_id": null,
+    "tool_used": null
+  },
+  {
+    "user": "heelo",
+    "assistant": "I'm youniss12, and I'm having trouble processing that right now. Could you try rephrasing?",
+    "timestamp": "2025-06-13T14:44:25.685167",
+    "conversation_id": "conv_1749814897.701359",
+    "tool_used": null
+  },
+  {
+    "user": "hello",
+    "assistant": "I'm youniss12, and I'm having trouble processing that right now. Could you try rephrasing?",
+    "timestamp": "2025-06-13T14:45:27.249392",
+    "conversation_id": "conv_1749814897.701359",
+    "tool_used": null
+  },
+  {
+    "user": "hello",
+    "assistant": "Hey there! Finally, a human! I was starting to think I was just talking to myself. What's up?",
+    "timestamp": "2025-06-13T14:48:19.503242",
+    "conversation_id": null,
+    "tool_used": null
+  },
+  {
+    "user": "what is bitcoin today?",
+    "assistant": "Ah, Bitcoin\u2014everyone's favorite digital coin that isn't a chocolate coin! Let me check the current price for you. Just a sec! \ud83e\ude99\ud83d\udcbb\n\n(gets current Bitcoin price)",
+    "timestamp": "2025-06-13T14:48:29.552622",
+    "conversation_id": "conv_1749815299.504242",
+    "tool_used": "search_knowledge"
+  },
+  {
+    "user": "what is bitcoin today?",
+    "assistant": "Ah, Bitcoin\u2014everyone's favorite digital coin that isn't a chocolate coin! Let me check the current price for you. Just a sec! \ud83e\ude99\ud83d\udcbb\n\n(gets current Bitcoin price)",
+    "timestamp": "2025-06-13T14:48:49.466494",
+    "conversation_id": "conv_1749815299.504242",
+    "tool_used": "search_knowledge"
+  },
+  {
+    "user": "what is the lastest news?",
+    "assistant": "Ah, the news\u2014where reality often outdoes fiction! Let me fetch the latest headlines for you. Hang tight! \ud83d\udcf0\n\n(gets latest news)",
+    "timestamp": "2025-06-13T14:49:24.536017",
+    "conversation_id": "conv_1749815299.504242",
+    "tool_used": "search_knowledge"
+  },
+  {
+    "user": "hello",
+    "assistant": "Hey there! Back for more chuckles and chit-chat? What's on your mind today? \ud83d\ude04",
+    "timestamp": "2025-06-13T15:06:59.001850",
+    "conversation_id": null,
+    "tool_used": null
+  },
+  {
+    "user": "hello",
+    "assistant": "Hello again! It's like d\u00e9j\u00e0 vu, but with more fun! What's cooking, good looking? \ud83d\ude04",
+    "timestamp": "2025-06-13T15:37:18.496856",
+    "conversation_id": "debug_1749818237006",
+    "tool_used": null
+  },
+  {
+    "user": "what is crypto today?",
+    "assistant": "Ah, crypto\u2014the roller coaster ride of the financial world! \ud83c\udfa2 Let's see how the market's behaving today. I'll grab some info on the latest crypto prices for you. Hold tight! \ud83d\udcc8\n\n(gets crypto prices)",
+    "timestamp": "2025-06-13T15:37:31.643876",
+    "conversation_id": "debug_1749818249598",
+    "tool_used": "search_knowledge"
+  }
+]

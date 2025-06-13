@@ -1,221 +1,196 @@
+
+# agent_config.py - UPDATED VERSION
 """
 Agent Configuration Manager
-Enhanced with User-Specific Knowledge Support
+Handles creation, loading, and management of AI agents
+UPDATED: Now supports voice_id parameter for voice cloning
 """
 
 import os
 import json
+import time
 import logging
 from datetime import datetime
-from modules.voice_cloner import VoiceCloner
+from voice_cloner import VoiceCloner
 
 logger = logging.getLogger(__name__)
 
 class AgentConfig:
     def __init__(self):
-        self.agents_dir = "./agents"
+        self.agents_dir = "agents"
         self.ensure_agents_directory()
-    
+
     def ensure_agents_directory(self):
         """Ensure agents directory exists"""
         if not os.path.exists(self.agents_dir):
             os.makedirs(self.agents_dir)
             logger.info(f"📁 Created agents directory: {self.agents_dir}")
-    
-    def collect_agent_info(self, name):
-        """Collect agent information from user"""
-        print(f"\\n🎭 CREATING AGENT: {name}")
-        print("=" * 40)
-        
-        # Tone selection
-        print("\\n📝 Select agent tone:")
-        tones = ["friendly", "professional", "casual", "enthusiastic", "calm", "witty", "serious"]
-        for i, tone in enumerate(tones, 1):
-            print(f"{i}. {tone}")
-        
-        while True:
-            try:
-                tone_choice = input("\\nSelect tone (1-7): ").strip()
-                tone_index = int(tone_choice) - 1
-                if 0 <= tone_index < len(tones):
-                    selected_tone = tones[tone_index]
-                    break
-                else:
-                    print("❌ Invalid choice. Please select 1-7.")
-            except ValueError:
-                print("❌ Please enter a valid number.")
-        
-        # Interests
-        print(f"\\n🎯 What are {name}'s interests? (comma-separated)")
-        print("Examples: technology, sports, music, cooking, travel, science")
-        interests_input = input("Interests: ").strip()
-        interests = [interest.strip() for interest in interests_input.split(",") if interest.strip()]
-        
-        if not interests:
-            interests = ["general conversation", "helping users"]
-        
-        return {
-            "tone": selected_tone,
-            "interests": interests
-        }
-    
-    def create_agent(self, name, api_keys):
-        """Create a new agent with voice cloning and knowledge setup"""
+
+    def create_agent(self, name, api_keys, personality="", tone="friendly", voice_id=None):
+        """
+        Create a new AI agent with optional voice cloning
+
+        Args:
+            name: Agent name
+            api_keys: Dictionary of API keys
+            personality: Agent personality description
+            tone: Agent tone (friendly, professional, etc.)
+            voice_id: Pre-cloned voice ID (optional)
+        """
         try:
-            # Collect agent information
-            agent_info = self.collect_agent_info(name)
-            
-            # Voice cloning
-            print(f"\\n🎙️ VOICE CLONING for {name}")
-            print("=" * 30)
-            print("We'll now clone your voice for this agent.")
-            print("You'll need to record a 15-second audio sample.")
-            
-            voice_cloner = VoiceCloner(api_keys["MINIMAX_API_KEY"])
-            voice_id = voice_cloner.clone_voice(name)
-            
+            logger.info(f"🤖 Creating agent: {name}")
+
+            # If no voice_id provided, attempt voice cloning
             if not voice_id:
-                print("⚠️ Voice cloning failed, but agent will still work with default voice")
-            
+                logger.info("🎙️ No voice ID provided, attempting voice cloning...")
+                voice_cloner = VoiceCloner()
+                voice_id = voice_cloner.setup_voice_cloning()
+
+                if voice_id:
+                    logger.info(f"✅ Voice cloned successfully: {voice_id}")
+                else:
+                    logger.warning("⚠️ Voice cloning failed, agent will use default voice")
+            else:
+                logger.info(f"🎙️ Using provided voice ID: {voice_id}")
+
             # Create agent configuration
             agent_config = {
                 "name": name,
-                "tone": agent_info["tone"],
-                "interests": agent_info["interests"],
+                "personality": personality,
+                "tone": tone,
                 "voice_id": voice_id,
                 "api_keys": api_keys,
                 "created_at": datetime.now().isoformat(),
-                "knowledge_setup": {
-                    "user_knowledge_enabled": True,
-                    "company_knowledge_enabled": True,
-                    "knowledge_user": name  # Use agent name as knowledge user
-                }
+                "updated_at": datetime.now().isoformat(),
+                "version": "1.0"
             }
-            
-            # Save agent configuration
-            agent_file = os.path.join(self.agents_dir, f"{name}.json")
-            with open(agent_file, 'w') as f:
+
+            # Save configuration
+            filename = f"{name.lower().replace(' ', '_')}.json"
+            filepath = os.path.join(self.agents_dir, filename)
+
+            with open(filepath, 'w') as f:
                 json.dump(agent_config, f, indent=2)
-            
-            # Create user knowledge directory for this agent
-            user_knowledge_dir = f"./user_knowledge/{name}"
-            if not os.path.exists(user_knowledge_dir):
-                os.makedirs(user_knowledge_dir)
-                os.makedirs(f"{user_knowledge_dir}/docs")
-                os.makedirs(f"{user_knowledge_dir}/uploads")
-                logger.info(f"📁 Created knowledge directories for {name}")
-            
-            # Create a welcome knowledge file for the agent
-            welcome_file = f"{user_knowledge_dir}/docs/welcome.txt"
-            welcome_content = f"""Welcome to {name}'s Knowledge Base!
 
-Agent Profile:
-- Name: {name}
-- Tone: {agent_info["tone"]}
-- Interests: {", ".join(agent_info["interests"])}
+            logger.info(f"✅ Agent configuration saved: {filepath}")
+            return filepath
 
-This agent has access to:
-1. Company knowledge (shared with all agents)
-2. Personal knowledge (unique to this agent)
-
-You can add more knowledge by:
-- Uploading files through the Knowledge UI (python knowledge_ui.py)
-- Adding documents to the user_knowledge/{name}/docs/ folder
-- The agent will automatically load this knowledge when launched
-
-Created on: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
-"""
-            
-            with open(welcome_file, 'w') as f:
-                f.write(welcome_content)
-            
-            logger.info(f"✅ Agent {name} created successfully!")
-            logger.info(f"📁 Configuration: {agent_file}")
-            logger.info(f"🧠 Knowledge directory: {user_knowledge_dir}")
-            
-            print(f"\\n🎉 SUCCESS! Agent '{name}' is ready!")
-            print(f"\\n📋 Agent Details:")
-            print(f"   - Tone: {agent_info['tone']}")
-            print(f"   - Interests: {', '.join(agent_info['interests'])}")
-            print(f"   - Voice: {'Cloned' if voice_id else 'Default'}")
-            print(f"   - Knowledge: Company + Personal")
-            print(f"\\n💡 To add knowledge:")
-            print(f"   1. Run: python knowledge_ui.py")
-            print(f"   2. Set username: {name}")
-            print(f"   3. Upload files for this agent")
-            
-            return agent_file
-            
         except Exception as e:
-            logger.error(f"❌ Failed to create agent {name}: {e}")
+            logger.error(f"❌ Failed to create agent: {e}")
             return None
-    
+
     def load_agent(self, name):
-        """Load agent configuration"""
+        """Load an existing agent configuration"""
         try:
-            agent_file = os.path.join(self.agents_dir, f"{name}.json")
-            
-            if not os.path.exists(agent_file):
-                logger.error(f"❌ Agent {name} not found!")
+            filename = f"{name.lower().replace(' ', '_')}.json"
+            filepath = os.path.join(self.agents_dir, filename)
+
+            if not os.path.exists(filepath):
+                logger.error(f"❌ Agent file not found: {filepath}")
                 return None
-            
-            with open(agent_file, 'r') as f:
+
+            with open(filepath, 'r') as f:
                 config = json.load(f)
-            
-            # Ensure knowledge setup exists
-            if "knowledge_setup" not in config:
-                config["knowledge_setup"] = {
-                    "user_knowledge_enabled": True,
-                    "company_knowledge_enabled": True,
-                    "knowledge_user": name
-                }
-            
-            logger.info(f"✅ Loaded agent: {name}")
+
+            logger.info(f"✅ Agent loaded: {name}")
             return config
-            
+
         except Exception as e:
-            logger.error(f"❌ Failed to load agent {name}: {e}")
+            logger.error(f"❌ Failed to load agent: {e}")
             return None
-    
+
     def list_agents(self):
         """List all available agents"""
         try:
-            if not os.path.exists(self.agents_dir):
-                return []
-            
             agents = []
+
+            if not os.path.exists(self.agents_dir):
+                return agents
+
             for filename in os.listdir(self.agents_dir):
                 if filename.endswith('.json'):
-                    agent_name = filename[:-5]  # Remove .json
+                    filepath = os.path.join(self.agents_dir, filename)
+
                     try:
-                        config = self.load_agent(agent_name)
-                        if config:
-                            agents.append({
-                                "name": agent_name,
-                                "tone": config.get("tone", "unknown"),
-                                "created_at": config.get("created_at", "unknown"),
-                                "file": filename,
-                                "has_voice": bool(config.get("voice_id")),
-                                "knowledge_enabled": config.get("knowledge_setup", {}).get("user_knowledge_enabled", False)
-                            })
+                        with open(filepath, 'r') as f:
+                            config = json.load(f)
+
+                        agents.append({
+                            "name": config.get("name", "Unknown"),
+                            "personality": config.get("personality", ""),
+                            "tone": config.get("tone", "friendly"),
+                            "voice_id": config.get("voice_id"),
+                            "created_at": config.get("created_at", ""),
+                            "file": filename
+                        })
+
                     except Exception as e:
-                        logger.error(f"Failed to load agent {agent_name}: {e}")
-            
-            return sorted(agents, key=lambda x: x["created_at"], reverse=True)
-            
+                        logger.warning(f"⚠️ Failed to load agent file {filename}: {e}")
+                        continue
+
+            # Sort by creation date (newest first)
+            agents.sort(key=lambda x: x.get("created_at", ""), reverse=True)
+
+            logger.info(f"📋 Found {len(agents)} agents")
+            return agents
+
         except Exception as e:
             logger.error(f"❌ Failed to list agents: {e}")
             return []
-    
-    def get_agent_knowledge_stats(self, name):
-        """Get knowledge statistics for an agent"""
+
+    def update_agent(self, name, updates):
+        """Update an existing agent configuration"""
         try:
-            from modules.knowledge_base import KnowledgeBase
-            
-            kb = KnowledgeBase(user_name=name)
-            kb.load_all_knowledge()
-            return kb.get_stats()
-            
+            config = self.load_agent(name)
+            if not config:
+                return False
+
+            # Update fields
+            for key, value in updates.items():
+                config[key] = value
+
+            config["updated_at"] = datetime.now().isoformat()
+
+            # Save updated configuration
+            filename = f"{name.lower().replace(' ', '_')}.json"
+            filepath = os.path.join(self.agents_dir, filename)
+
+            with open(filepath, 'w') as f:
+                json.dump(config, f, indent=2)
+
+            logger.info(f"✅ Agent updated: {name}")
+            return True
+
         except Exception as e:
-            logger.error(f"Failed to get knowledge stats for {name}: {e}")
-            return {"error": str(e)}# """
+            logger.error(f"❌ Failed to update agent: {e}")
+            return False
+
+    def delete_agent(self, name):
+        """Delete an agent configuration"""
+        try:
+            filename = f"{name.lower().replace(' ', '_')}.json"
+            filepath = os.path.join(self.agents_dir, filename)
+
+            if os.path.exists(filepath):
+                os.remove(filepath)
+                logger.info(f"✅ Agent deleted: {name}")
+                return True
+            else:
+                logger.warning(f"⚠️ Agent file not found: {filepath}")
+                return False
+
+        except Exception as e:
+            logger.error(f"❌ Failed to delete agent: {e}")
+            return False
+
+    def get_agent_voice_id(self, name):
+        """Get the voice ID for a specific agent"""
+        try:
+            config = self.load_agent(name)
+            if config:
+                return config.get("voice_id")
+            return None
+
+        except Exception as e:
+            logger.error(f"❌ Failed to get voice ID for agent {name}: {e}")
+            return None

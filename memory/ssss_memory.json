@@ -1,0 +1,58 @@
+[
+  {
+    "user": "hello",
+    "assistant": "ssss... Hello there! How can I assist you today?",
+    "timestamp": "2025-06-13T18:27:50.361136",
+    "conversation_id": null,
+    "tool_used": null
+  },
+  {
+    "user": "hello",
+    "assistant": "ssss... Hi again! What's on your mind today?",
+    "timestamp": "2025-06-13T18:32:14.278103",
+    "conversation_id": null,
+    "tool_used": null
+  },
+  {
+    "user": "what is bitcoin today?",
+    "assistant": "ssss... Let me check the current price of Bitcoin for you. One moment, please. ssss...\n\n(get_crypto_price: Bitcoin)",
+    "timestamp": "2025-06-13T18:32:24.544267",
+    "conversation_id": "conv_1749828734.278103",
+    "tool_used": "search_knowledge"
+  },
+  {
+    "user": "",
+    "assistant": "I apologize for the inconvenience. It seems like there was a hiccup. Let me try again. One moment, please. ssss...\n\n(get_crypto_price: Bitcoin)",
+    "timestamp": "2025-06-13T18:37:31.610392",
+    "conversation_id": "conv_1749828734.278103",
+    "tool_used": null
+  },
+  {
+    "user": "tell me about this pdf ",
+    "assistant": "ssss... It looks like you've uploaded a PDF titled \"arabic challenge practice.pdf.\" This document seems to contain practice questions related to Arabic language challenges, such as diacritic ambiguity. Is there something specific you'd like to know or discuss about this document? ssss...",
+    "timestamp": "2025-06-13T18:38:08.678668",
+    "conversation_id": "conv_1749828734.278103",
+    "tool_used": "search_knowledge"
+  },
+  {
+    "user": "hell",
+    "assistant": "ssss... Did you mean to say \"hello,\" or is there something else on your mind? Either way, I'm here to help! ssss...",
+    "timestamp": "2025-06-13T18:38:37.402722",
+    "conversation_id": null,
+    "tool_used": null
+  },
+  {
+    "user": "what is the bitcoin today?",
+    "assistant": "ssss... Let's find out the current price of Bitcoin. Give me just a moment. ssss...\n\n(get_crypto_price: Bitcoin)",
+    "timestamp": "2025-06-13T18:38:49.295831",
+    "conversation_id": "conv_1749829117.402722",
+    "tool_used": "search_knowledge"
+  },
+  {
+    "user": "what is bitcoin today?",
+    "assistant": "ssss... The current price of Bitcoin is $105,642, with a change of -1.64%. If you have any more questions or need further information, feel free to ask! ssss...",
+    "timestamp": "2025-06-13T18:42:02.347489",
+    "conversation_id": "conv_1749829117.402722",
+    "tool_used": "get_crypto_price"
+  }
+]

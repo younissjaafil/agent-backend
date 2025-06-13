@@ -1,0 +1,86 @@
+[
+  {
+    "user": "hello",
+    "assistant": "Hey there! How's it going? Need some laughs or just a chat partner with a great sense of humor? I'm your AI, ready to roll! \ud83d\ude04",
+    "timestamp": "2025-06-13T15:08:48.757843",
+    "conversation_id": null,
+    "tool_used": null
+  },
+  {
+    "user": "hello",
+    "assistant": "Hey again! It's like d\u00e9j\u00e0 vu but in a good way! What's up? \ud83d\ude0a",
+    "timestamp": "2025-06-13T15:10:07.554330",
+    "conversation_id": null,
+    "tool_used": null
+  },
+  {
+    "user": "hello",
+    "assistant": "Okay, now I\u2019m starting to think we\u2019re in a \u201chello\u201d loop! But hey, I\u2019m here for it. What\u2019s on your mind? \ud83d\ude04",
+    "timestamp": "2025-06-13T15:21:15.357927",
+    "conversation_id": null,
+    "tool_used": null
+  },
+  {
+    "user": "hello",
+    "assistant": "Ah, I see you're a fan of the classics\u2014repeating \"hello\" never goes out of style! \ud83d\ude04 Anything else you'd like to share or chat about?",
+    "timestamp": "2025-06-13T15:25:27.739309",
+    "conversation_id": "debug_1749817526119",
+    "tool_used": null
+  },
+  {
+    "user": "what is bitcoin today?",
+    "assistant": "Looking to keep tabs on the crypto world, huh? Let me check the latest Bitcoin price for you. Hold on one sec! \u23f3\ud83d\udcb0\n\nAlright, let me fetch that info for you... *clickity clack*...\n\nOkay, I'm just kidding, I'm not a typist from the 90s. Let me use my tools! Here we go... \n\n*Fetching current Bitcoin price...*",
+    "timestamp": "2025-06-13T15:25:39.333292",
+    "conversation_id": "debug_1749817536174",
+    "tool_used": "search_knowledge"
+  },
+  {
+    "user": "hello",
+    "assistant": "Hello again! It's like we're in a sitcom where \"hello\" is the catchphrase! \ud83d\ude04 Still interested in that Bitcoin price or just enjoying our little greeting exchange?",
+    "timestamp": "2025-06-13T15:30:08.668091",
+    "conversation_id": "debug_1749817805806",
+    "tool_used": null
+  },
+  {
+    "user": "what is bitcoin ?",
+    "assistant": "Ah, Bitcoin! It's like the rock star of the cryptocurrency world. Imagine if money went digital, but with a twist\u2014it's decentralized, meaning no banks or governments are controlling it. Instead, it's powered by a technology called blockchain, which is like a super secure, digital ledger that everyone can see but no one can mess with. It's like the cool kid on the digital block that everyone's talking about. Want to dive deeper into the crypto rabbit hole? \ud83d\udd73\ufe0f\ud83d\udc07",
+    "timestamp": "2025-06-13T15:30:18.392673",
+    "conversation_id": "debug_1749817814262",
+    "tool_used": "search_knowledge"
+  },
+  {
+    "user": "what is the latest price of bitcoin ?",
+    "assistant": "Alright, let me just fire up my crystal ball... oh wait, I mean my digital tools, to get you the latest Bitcoin price. Hold tight! \ud83d\udcb8\ud83d\udd2e\n\n*Fetching the latest Bitcoin price...*",
+    "timestamp": "2025-06-13T15:30:34.437515",
+    "conversation_id": "debug_1749817832869",
+    "tool_used": "search_knowledge"
+  },
+  {
+    "user": "hello",
+    "assistant": "Well, hello there! It's like we're stuck in a delightful time loop of greetings. \ud83d\ude04 Still interested in the Bitcoin price, or have you been swept away by the magic of \"hello\"?",
+    "timestamp": "2025-06-13T15:41:08.566186",
+    "conversation_id": "debug_1749818466670",
+    "tool_used": null
+  },
+  {
+    "user": "hello",
+    "assistant": "Hello again! It's like Groundhog Day, but with more hellos and fewer groundhogs. \ud83d\ude04 How can I assist you in this endless loop of greetings?",
+    "timestamp": "2025-06-13T18:12:52.933497",
+    "conversation_id": "debug_1749827570129",
+    "tool_used": null
+  },
+  {
+    "user": "what is bitcoin today?",
+    "assistant": "Alright, let's see what Bitcoin's up to today. It might be climbing mountains or diving into valleys! Let me just grab my digital spyglass and check the latest price for you. \ud83d\udcb0\ud83d\udd0d\n\n*Fetching the latest Bitcoin price...*",
+    "timestamp": "2025-06-13T18:13:05.356482",
+    "conversation_id": "debug_1749827582744",
+    "tool_used": "search_knowledge"
+  },
+  {
+    "user": "hello",
+    "assistant": "Hello! It's like we're in a never-ending game of peek-a-boo. \ud83d\udc40 How can I assist you today, or shall we continue our delightful exchange of hellos?",
+    "timestamp": "2025-06-13T18:14:16.066613",
+    "conversation_id": null,
+    "tool_used": null
+  }
+]

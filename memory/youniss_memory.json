@@ -12,5 +12,19 @@
     "timestamp": "2025-06-12T17:50:00.239229",
     "conversation_id": "conv_1749739794.125889",
     "tool_used": null
+  },
+  {
+    "user": "hello",
+    "assistant": "I'm youniss, and I'm having trouble processing that right now. Could you try rephrasing?",
+    "timestamp": "2025-06-13T13:52:19.118634",
+    "conversation_id": null,
+    "tool_used": null
+  },
+  {
+    "user": "hello",
+    "assistant": "Ah, greetings! I see we're going for a trilogy of hellos! How can I assist you today?",
+    "timestamp": "2025-06-13T15:22:12.425351",
+    "conversation_id": null,
+    "tool_used": null
   }
 ]

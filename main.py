@@ -3,17 +3,22 @@
 Universal AI Agent System - Complete Web API Server
 FastAPI wrapper with full tool integration
 """
-
+import requests
 import os
 import sys
 import json
+import time
 import logging
 import openai
 from typing import Dict, List, Optional
 from datetime import datetime
-from fastapi import FastAPI, HTTPException, UploadFile, File, Form
+from fastapi import FastAPI, HTTPException, UploadFile, File, Form  
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, FileResponse
+import speech_recognition as sr
+from fastapi import  BackgroundTasks
+import shutil
+ 
 from pydantic import BaseModel
 import uvicorn
 from dotenv import load_dotenv
@@ -27,7 +32,7 @@ logger = logging.getLogger(__name__)
 
 # Import your existing modules
 try:
-    from modules.agent_config import AgentConfig
+    from modules.agent_config1 import AgentConfig
     from modules.knowledge_base import KnowledgeBase
     from modules.tool_registry import ToolRegistry
     from modules.voice_cloner import VoiceCloner
@@ -122,25 +127,70 @@ Respond naturally as {self.name} would, incorporating your personality traits in
         
         return prompt
     
+    # def detect_tool_usage(self, user_input):
+    #     """Detect if user input requires tool usage"""
+    #     user_lower = user_input.lower()
+        
+    #     # Knowledge search triggers
+    #     if any(word in user_lower for word in ['what is', 'tell me about', 'explain', 'define']):
+    #         return 'search_knowledge', user_input
+        
+    #     # Web search triggers
+    #     if any(word in user_lower for word in ['search', 'look up', 'find', 'latest']):
+    #         return 'web_search', user_input
+        
+    #     # Crypto triggers
+    #     if any(word in user_lower for word in ['bitcoin', 'crypto', 'price', 'btc', 'ethereum']):
+    #         crypto_words = ['bitcoin', 'ethereum', 'btc', 'eth']
+    #         for word in crypto_words:
+    #             if word in user_lower:
+    #                 return 'get_crypto_price', word
+    #         return 'get_crypto_price', 'bitcoin'
+        
+    #     # News triggers
+    #     if any(word in user_lower for word in ['news', 'headlines', 'current events']):
+    #         return 'get_news', user_input
+        
+    #     # Weather triggers
+    #     if any(word in user_lower for word in ['weather', 'temperature', 'forecast']):
+    #         # Extract location if possible
+    #         words = user_input.split()
+    #         for i, word in enumerate(words):
+    #             if word.lower() in ['in', 'at', 'for']:
+    #                 if i + 1 < len(words):
+    #                     return 'get_weather', words[i + 1]
+    #         return 'get_weather', 'New York'  # Default location
+        
+    #     return None, None
     def detect_tool_usage(self, user_input):
         """Detect if user input requires tool usage"""
         user_lower = user_input.lower()
         
-        # Knowledge search triggers
-        if any(word in user_lower for word in ['what is', 'tell me about', 'explain', 'define']):
+        # Crypto triggers - CHECK FIRST (before knowledge search)
+        if any(word in user_lower for word in ['bitcoin', 'crypto', 'price', 'btc', 'ethereum']):
+            # Map common crypto terms to CoinGecko IDs
+            crypto_mapping = {
+                'bitcoin': 'bitcoin',
+                'btc': 'bitcoin', 
+                'ethereum': 'ethereum',
+                'eth': 'ethereum',
+                'crypto': 'bitcoin'  # Default to bitcoin
+            }
+            
+            # Find which crypto was mentioned
+            for term, coin_id in crypto_mapping.items():
+                if term in user_lower:
+                    return 'get_crypto_price', coin_id
+            
+            return 'get_crypto_price', 'bitcoin'  # Default fallback
+        
+        # Knowledge search triggers - MOVED AFTER CRYPTO
+        if any(word in user_lower for word in ['what is', 'tell me about', 'explain', 'define']) and not any(word in user_lower for word in ['bitcoin', 'crypto', 'price', 'btc', 'ethereum']):
             return 'search_knowledge', user_input
         
         # Web search triggers
-        if any(word in user_lower for word in ['search', 'look up', 'find', 'latest']):
+        if any(word in user_lower for word in ['search', 'look up', 'find', 'latest']) and not any(word in user_lower for word in ['bitcoin', 'crypto', 'price']):
             return 'web_search', user_input
-        
-        # Crypto triggers
-        if any(word in user_lower for word in ['bitcoin', 'crypto', 'price', 'btc', 'ethereum']):
-            crypto_words = ['bitcoin', 'ethereum', 'btc', 'eth']
-            for word in crypto_words:
-                if word in user_lower:
-                    return 'get_crypto_price', word
-            return 'get_crypto_price', 'bitcoin'
         
         # News triggers
         if any(word in user_lower for word in ['news', 'headlines', 'current events']):
@@ -156,8 +206,7 @@ Respond naturally as {self.name} would, incorporating your personality traits in
                         return 'get_weather', words[i + 1]
             return 'get_weather', 'New York'  # Default location
         
-        return None, None
-    
+        return None, None  
     def process_with_openai(self, user_input, context=""):
         """Process user input with OpenAI"""
         try:
@@ -179,7 +228,7 @@ Respond naturally as {self.name} would, incorporating your personality traits in
             messages.append({"role": "user", "content": user_input})
             
             response = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",
+                model="gpt-4o",
                 messages=messages,
                 max_tokens=500,
                 temperature=0.7
@@ -199,25 +248,44 @@ Respond naturally as {self.name} would, incorporating your personality traits in
             # Check if tools should be used
             tool_name, tool_query = self.detect_tool_usage(user_input)
             context = ""
-            
             if tool_name and self.tool_registry:
                 tool = self.tool_registry.get_tool(tool_name)
                 if tool:
-                    logger.info(f"🛠️ Using tool: {tool_name}")
+                    logger.info(f"🛠️ Using tool: {tool_name} with query: {tool_query}")
                     try:
                         if tool_name == 'search_knowledge':
-                            context = tool.function(tool_query)
-                        elif tool_name == 'web_search':
-                            context = tool.function(tool_query)
+                            context = tool.function(query=tool_query)
+                        elif tool_name == 'Web Search':
+                            context = tool.function(query=tool_query)
                         elif tool_name == 'get_crypto_price':
-                            context = tool.function(tool_query)
+                            context = tool.function(symbol=tool_query)  # Use symbol parameter
                         elif tool_name == 'get_news':
-                            context = tool.function(tool_query)
+                            context = tool.function(topic=tool_query)
                         elif tool_name == 'get_weather':
-                            context = tool.function(tool_query)
+                            context = tool.function(location=tool_query)
+                            
+                        logger.info(f"🔧 Tool result: {context}")
                     except Exception as e:
                         logger.error(f"Tool execution failed: {e}")
-                        context = ""
+                        context = f"Tool error: {str(e)}"  
+            # if tool_name and self.tool_registry:
+            #     tool = self.tool_registry.get_tool(tool_name)
+            #     if tool:
+            #         logger.info(f"🛠️ Using tool: {tool_name}")
+            #         try:
+            #             if tool_name == 'search_knowledge':
+            #                 context = tool.function(tool_query)
+            #             elif tool_name == 'web_search':
+            #                 context = tool.function(tool_query)
+            #             elif tool_name == 'get_crypto_price':
+            #                 context = tool.function(tool_query)
+            #             elif tool_name == 'get_news':
+            #                 context = tool.function(tool_query)
+            #             elif tool_name == 'get_weather':
+            #                 context = tool.function(tool_query)
+            #         except Exception as e:
+            #             logger.error(f"Tool execution failed: {e}")
+            #             context = ""
             
             # Process with OpenAI
             response = self.process_with_openai(user_input, context)
@@ -319,7 +387,7 @@ async def root():
 async def get_agents():
     """Get all available agents"""
     try:
-        agents = config_manager.list_agents()
+        agents = config_manager.list_agents()  # This already returns full agent data
         
         response_agents = []
         for agent in agents:
@@ -327,8 +395,8 @@ async def get_agents():
                 id=agent["name"],
                 name=agent["name"],
                 personality=agent.get("tone", "friendly"),
-                voice_model=agent.get("voice_id", "default"),
-                description=f"A {agent.get('tone', 'friendly')} AI assistant interested in {', '.join(agent.get('interests', ['general topics']))}",
+                voice_model=agent.get("voice_id", "default"),  # Now this will work!
+                description=f"A {agent.get('tone', 'friendly')} AI assistant interested in {agent.get('personality', 'general topics')}",
                 created_at=agent.get("created_at", datetime.now().isoformat())
             ))
         
@@ -337,6 +405,245 @@ async def get_agents():
     except Exception as e:
         logger.error(f"Error getting agents: {e}")
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+# @app.get("/agents", response_model=List[AgentResponse])
+# async def get_agents():
+#     """Get all available agents"""
+#     try:
+#         agents = config_manager.list_agents()
+#
+#         response_agents = []
+#         for agent in agents:
+#             response_agents.append(AgentResponse(
+#                 id=agent["name"],
+#                 name=agent["name"],
+#                 personality=agent.get("tone", "friendly"),
+#                 voice_model=agent.get("voice_id", "default"),
+#                 description=f"A {agent.get('tone', 'friendly')} AI assistant interested in {', '.join(agent.get('interests', ['general topics']))}",
+#                 created_at=agent.get("created_at", datetime.now().isoformat())
+#             ))
+        
+#         return response_agents
+    
+#     except Exception as e:
+#         logger.error(f"Error getting agents: {e}")
+#         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+ # Add this to your FastAPI server (universal_api_server_complete.py)
+   
+@app.post("/api/agents/upload-voice")
+async def upload_voice_for_cloning(file: UploadFile = File(...)):
+    """Handle voice file upload for cloning"""
+    try:
+        # Validate file type
+        if not file.content_type.startswith('audio/'):
+            raise HTTPException(status_code=400, detail="File must be an audio file")
+
+        # Save uploaded file temporarily
+        temp_dir = "temp_voice_uploads"
+        os.makedirs(temp_dir, exist_ok=True)
+
+        temp_file_path = os.path.join(temp_dir, f"voice_{int(time.time())}.wav")
+
+        # Save the uploaded file
+        with open(temp_file_path, "wb") as buffer:
+            content = await file.read()
+            buffer.write(content)
+
+        # Initialize voice cloner
+        voice_cloner = VoiceCloner()
+
+        # Upload to MiniMax and clone voice
+        file_id = voice_cloner.upload_audio_file(temp_file_path)
+        if not file_id:
+            raise HTTPException(status_code=500, detail="Failed to upload voice file")
+
+        cloned_voice_id = voice_cloner.clone_voice_with_minimax(file_id)
+        if not cloned_voice_id:
+            raise HTTPException(status_code=500, detail="Failed to clone voice")
+
+        # Clean up temp file
+        if os.path.exists(temp_file_path):
+            os.remove(temp_file_path)
+
+        return {
+            "success": True,
+            "voice_id": cloned_voice_id,
+            "message": "Voice cloned successfully!"
+        }
+
+    except Exception as e:
+        logger.error(f"Voice upload error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+    
+# Add this to your FastAPI server (universal_api_server_complete.py)
+
+@app.post("/api/voice-chat")
+async def voice_chat(
+    audio: UploadFile = File(...),
+    agent_id: str = Form(...)
+):
+    """Handle voice chat with agent"""
+    try:
+        # Save uploaded audio
+        audio_path = f"temp_voice_input_{agent_id}_{int(time.time())}.wav"
+        with open(audio_path, "wb") as buffer:
+            shutil.copyfileobj(audio.file, buffer)
+        
+        # Convert speech to text
+        recognizer = sr.Recognizer()
+        
+        with sr.AudioFile(audio_path) as source:
+            audio_data = recognizer.record(source)
+            user_text = recognizer.recognize_google(audio_data)
+        
+        logger.info(f"🎤 User said: {user_text}")
+        
+        # Get agent from config_manager
+        agent_data = None
+        agents_list = config_manager.list_agents()
+        for agent in agents_list:
+            if agent["name"] == agent_id:
+                agent_data = agent
+                break
+        
+        if not agent_data:
+            raise HTTPException(status_code=404, detail="Agent not found")
+        
+        # Create UniversalAgent instance for processing
+        universal_agent = UniversalAgent(agent_data)
+        response_text = universal_agent.process_message(user_text)
+        
+        logger.info(f"🤖 Agent response: {response_text}")
+        
+        # Convert response to speech using cloned voice
+        voice_cloner = VoiceCloner()
+        
+        # Use agent's cloned voice if available
+        voice_id = agent_data.get('voice_id')
+        
+        # Generate speech
+        output_audio_path = f"temp_voice_output_{agent_id}_{int(time.time())}.wav"
+        success = voice_cloner.text_to_speech(
+            text=response_text,
+            output_path=output_audio_path,
+            voice_id=voice_id
+        )
+        
+        if not success:
+            raise HTTPException(status_code=500, detail="Failed to generate speech")
+        
+        # Clean up input file
+        if os.path.exists(audio_path):
+            os.remove(audio_path)
+        
+        # Return audio response
+        def cleanup_file():
+            if os.path.exists(output_audio_path):
+                os.remove(output_audio_path)
+        
+        return FileResponse(
+            output_audio_path,
+            media_type="audio/wav",
+            filename="agent_response.wav",
+            # background=BackgroundTask(cleanup_file)
+        )
+        
+    except Exception as e:
+        logger.error(f"Voice chat error: {e}")
+        # Clean up files on error
+        for file_path in [locals().get('audio_path'), locals().get('output_audio_path')]:
+            if file_path and os.path.exists(file_path):
+                os.remove(file_path)
+        raise HTTPException(status_code=500, detail=str(e))
+ 
+
+# Add text-to-speech method to VoiceCloner class
+def text_to_speech(self, text: str, output_path: str, voice_id: str = None):
+    """Convert text to speech using MiniMax TTS"""
+    try:
+        logger.info(f"🔊 Converting text to speech: {text[:50]}...")
+        
+        tts_url = f"https://api.minimaxi.chat/v1/text_to_speech?GroupId={self.group_id}"
+        
+        headers = {
+            "Authorization": f"Bearer {self.minimax_api_key}",
+            "Content-Type": "application/json"
+        }
+        
+        payload = {
+            "text": text,
+            "model": "speech-01",
+            "voice_id": voice_id or "male-qn-qingse",  # Default voice if no cloned voice
+            "speed": 1.0,
+            "vol": 50,
+            "pitch": 0
+        }
+        
+        response = requests.post(tts_url, headers=headers, json=payload, timeout=30)
+        
+        if response.status_code == 200:
+            # Save audio content
+            with open(output_path, 'wb') as f:
+                f.write(response.content)
+            logger.info(f"✅ Speech generated successfully: {output_path}")
+            return True
+        else:
+            logger.error(f"❌ TTS failed: {response.status_code} - {response.text}")
+            return False
+            
+    except Exception as e:
+        logger.error(f"❌ TTS error: {e}")
+        return False
+
+# Also update the create_agent endpoint to accept voice_id
+@app.post("/api/agents")
+async def create_agent(agent_data: dict):
+    """Create a new agent with optional voice cloning"""
+    try:
+        config_manager = AgentConfig()
+
+        # Extract data
+        name = agent_data.get("name")
+        personality = agent_data.get("personality", "")
+        tone = agent_data.get("tone", "friendly")
+        voice_id = agent_data.get("voice_id")  # New field for cloned voice
+
+        if not name:
+            raise HTTPException(status_code=400, detail="Agent name is required")
+
+        # Check if agent exists
+        existing_agents = config_manager.list_agents()
+        if any(agent['name'].lower() == name.lower() for agent in existing_agents):
+            raise HTTPException(status_code=400, detail=f"Agent '{name}' already exists")
+
+        # Get API keys
+        api_keys = {
+            "OPENAI_API_KEY": os.getenv("OPENAI_API_KEY"),
+            "MINIMAX_API_KEY": os.getenv("MINIMAX_API_KEY"),
+            "NEWSAPI_KEY": os.getenv("NEWSAPI_KEY"),
+            "WEATHER_API_KEY": os.getenv("WEATHER_API_KEY")
+        }
+
+        # Create agent with voice_id
+        agent_file = config_manager.create_agent(
+            name=name, 
+            api_keys=api_keys, 
+            personality=personality, 
+            tone=tone,
+            voice_id=voice_id  # Pass the cloned voice ID
+        )
+
+        if agent_file:
+            return {
+                "success": True,
+                "message": f"Agent '{name}' created successfully!",
+                "agent_file": agent_file
+            }
+        else:
+            raise HTTPException(status_code=500, detail="Failed to create agent")
+
+    except Exception as e:
+        logger.error(f"Create agent error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/agents", response_model=AgentResponse)
 async def create_agent(agent_data: AgentCreateRequest):
