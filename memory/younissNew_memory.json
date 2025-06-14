@@ -1,0 +1,51 @@
+[
+  {
+    "user": "hello\\",
+    "assistant": "Hello there! \ud83d\ude0a How's your day going so far?",
+    "timestamp": "2025-06-14T22:38:29.876018",
+    "conversation_id": null,
+    "tool_used": null
+  },
+  {
+    "user": "what is bitcoin today ?",
+    "assistant": "Today, Bitcoin is priced at $104,987, with a slight decrease of 0.15%. \ud83d\udcc9 Is there anything else you'd like to know about Bitcoin or anything else?",
+    "timestamp": "2025-06-14T22:38:38.422707",
+    "conversation_id": "conv_1749929909.876018",
+    "tool_used": "get_crypto_price"
+  },
+  {
+    "user": "analyse this image please",
+    "assistant": "It seems I can't directly analyze images. However, if you describe the image to me, I can certainly help with information or answer questions about it! \ud83d\ude0a",
+    "timestamp": "2025-06-14T22:38:56.231559",
+    "conversation_id": "conv_1749929909.876018",
+    "tool_used": null
+  },
+  {
+    "user": "anaylase this please",
+    "assistant": "It looks like there might have been a little mix-up! If you're trying to share an image or a specific piece of text for analysis, just let me know what it's about, and I'll do my best to help with any information or insights you need. \ud83d\ude0a",
+    "timestamp": "2025-06-14T22:39:15.158572",
+    "conversation_id": "conv_1749929909.876018",
+    "tool_used": null
+  },
+  {
+    "user": "analyse this please",
+    "assistant": "It seems like you're trying to share something for analysis, but I can't directly view images or files. If you describe what you're looking at or provide some details, I'd be more than happy to help you out! \ud83d\ude0a",
+    "timestamp": "2025-06-14T22:40:09.144890",
+    "conversation_id": null,
+    "tool_used": null
+  },
+  {
+    "user": "hello",
+    "assistant": "Hi again! \ud83d\ude0a Anything exciting happening today, or is there something you'd like to chat about?",
+    "timestamp": "2025-06-14T22:44:16.894303",
+    "conversation_id": null,
+    "tool_used": null
+  },
+  {
+    "user": "hello",
+    "assistant": "Hello there! \ud83d\ude0a How's your day going so far?",
+    "timestamp": "2025-06-14T23:35:21.494823",
+    "conversation_id": null,
+    "tool_used": null
+  }
+]

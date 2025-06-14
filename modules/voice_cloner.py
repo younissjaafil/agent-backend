@@ -59,6 +59,40 @@ class VoiceCloner:
             logger.error(f"❌ Microphone setup failed: {e}")
             return False
 
+    def text_to_speech(self, text: str, output_path: str, voice_id: str = None):
+        try:
+            logger.info(f"🔊 Converting text to speech: {text[:50]}...")
+
+            tts_url = f"https://api.minimaxi.chat/v1/text_to_speech?GroupId={self.group_id}"
+
+            headers = {
+                "Authorization": f"Bearer {self.minimax_api_key}",
+                "Content-Type": "application/json"
+            }
+
+            payload = {
+                "text": text,
+                "model": "speech-01",
+                "voice_id": voice_id or "male-qn-qingse",
+                "speed": 1.0,
+                "vol": 50,
+                "pitch": 0
+            }
+
+            response = requests.post(tts_url, headers=headers, json=payload, timeout=30)
+
+            if response.status_code == 200:
+                with open(output_path, 'wb') as f:
+                    f.write(response.content)
+                logger.info(f"✅ Speech generated successfully: {output_path}")
+                return True
+            else:
+                logger.error(f"❌ TTS failed: {response.status_code} - {response.text}")
+                return False
+
+        except Exception as e:
+            logger.error(f"❌ TTS error: {e}")
+            return False
     def record_fixed_duration(self, duration=15):
         """Record for EXACTLY the specified duration using PyAudio"""
         try:
@@ -193,47 +227,7 @@ class VoiceCloner:
             logger.error(f"❌ Fallback recording failed: {e}")
             return None
 
-    # def upload_audio_file(self, audio_file_path):
-    #     """Upload audio file to MiniMax"""
-    #     try:
-    #         logger.info("📤 Uploading audio file to MiniMax...")
-            
-    #         upload_url = f"https://api.minimaxi.chat/v1/files/upload?GroupId={self.group_id}"
-            
-    #         upload_headers = {
-    #             "Authorization": f"Bearer {self.minimax_api_key}"
-    #         }
-            
-    #         data = {'purpose': 'voice_clone'}
-            
-    #         with open(audio_file_path, 'rb') as audio_file:
-    #             files = {'file': ('audio.wav', audio_file, 'audio/wav')}
-    #             response = requests.post(upload_url, headers=upload_headers, data=data, files=files, timeout=60)
-            
-    #         logger.info(f"📡 Upload response status: {response.status_code}")
-            
-    #         if response.status_code == 200:
-    #             result = response.json()
-                
-    #             file_id = None
-    #             if 'file' in result and 'file_id' in result['file']:
-    #                 file_id = result['file']['file_id']
-    #             elif 'file_id' in result:
-    #                 file_id = result['file_id']
-                
-    #             if file_id:
-    #                 logger.info(f"✅ File uploaded successfully! File ID: {file_id}")
-    #                 return file_id
-    #             else:
-    #                 logger.error(f"❌ No file_id in response: {result}")
-    #                 return None
-    #         else:
-    #             logger.error(f"❌ File upload failed: {response.status_code}")
-    #             return None
-            
-    #     except Exception as e:
-    #         logger.error(f"❌ File upload error: {e}")
-    #         return None
+ 
     def upload_audio_file(self, audio_file_path):
         """Upload audio file to MiniMax"""
         try:

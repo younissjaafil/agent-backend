@@ -1,0 +1,19 @@
+# Voice Chat Requirements
+# Add these to your existing requirements.txt
+
+# Voice Chat Dependencies
+pydub==0.25.1
+simpleaudio==1.0.4
+pyaudio==0.2.11
+
+# Audio Processing
+librosa==0.10.1
+soundfile==0.12.1
+
+# Web Audio (if needed)
+webrtcvad==2.0.10
+
+# Note: You may need to install system dependencies:
+# Ubuntu/Debian: sudo apt-get install portaudio19-dev python3-pyaudio
+# macOS: brew install portaudio
+# Windows: pip install pipwin && pipwin install pyaudio

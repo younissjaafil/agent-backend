@@ -18,7 +18,7 @@ from fastapi.responses import JSONResponse, FileResponse
 import speech_recognition as sr
 from fastapi import  BackgroundTasks
 import shutil
- 
+from utils.audio_utils import convert_to_pcm16k  # Assuming you have this utility function
 from pydantic import BaseModel
 import uvicorn
 from dotenv import load_dotenv
@@ -126,42 +126,7 @@ Available tools: search_knowledge, web_search, get_crypto_price, get_news, get_w
 Respond naturally as {self.name} would, incorporating your personality traits into every interaction."""
         
         return prompt
-    
-    # def detect_tool_usage(self, user_input):
-    #     """Detect if user input requires tool usage"""
-    #     user_lower = user_input.lower()
-        
-    #     # Knowledge search triggers
-    #     if any(word in user_lower for word in ['what is', 'tell me about', 'explain', 'define']):
-    #         return 'search_knowledge', user_input
-        
-    #     # Web search triggers
-    #     if any(word in user_lower for word in ['search', 'look up', 'find', 'latest']):
-    #         return 'web_search', user_input
-        
-    #     # Crypto triggers
-    #     if any(word in user_lower for word in ['bitcoin', 'crypto', 'price', 'btc', 'ethereum']):
-    #         crypto_words = ['bitcoin', 'ethereum', 'btc', 'eth']
-    #         for word in crypto_words:
-    #             if word in user_lower:
-    #                 return 'get_crypto_price', word
-    #         return 'get_crypto_price', 'bitcoin'
-        
-    #     # News triggers
-    #     if any(word in user_lower for word in ['news', 'headlines', 'current events']):
-    #         return 'get_news', user_input
-        
-    #     # Weather triggers
-    #     if any(word in user_lower for word in ['weather', 'temperature', 'forecast']):
-    #         # Extract location if possible
-    #         words = user_input.split()
-    #         for i, word in enumerate(words):
-    #             if word.lower() in ['in', 'at', 'for']:
-    #                 if i + 1 < len(words):
-    #                     return 'get_weather', words[i + 1]
-    #         return 'get_weather', 'New York'  # Default location
-        
-    #     return None, None
+     
     def detect_tool_usage(self, user_input):
         """Detect if user input requires tool usage"""
         user_lower = user_input.lower()
@@ -268,26 +233,7 @@ Respond naturally as {self.name} would, incorporating your personality traits in
                     except Exception as e:
                         logger.error(f"Tool execution failed: {e}")
                         context = f"Tool error: {str(e)}"  
-            # if tool_name and self.tool_registry:
-            #     tool = self.tool_registry.get_tool(tool_name)
-            #     if tool:
-            #         logger.info(f"🛠️ Using tool: {tool_name}")
-            #         try:
-            #             if tool_name == 'search_knowledge':
-            #                 context = tool.function(tool_query)
-            #             elif tool_name == 'web_search':
-            #                 context = tool.function(tool_query)
-            #             elif tool_name == 'get_crypto_price':
-            #                 context = tool.function(tool_query)
-            #             elif tool_name == 'get_news':
-            #                 context = tool.function(tool_query)
-            #             elif tool_name == 'get_weather':
-            #                 context = tool.function(tool_query)
-            #         except Exception as e:
-            #             logger.error(f"Tool execution failed: {e}")
-            #             context = ""
             
-            # Process with OpenAI
             response = self.process_with_openai(user_input, context)
             
             # Save to memory
@@ -405,30 +351,7 @@ async def get_agents():
     except Exception as e:
         logger.error(f"Error getting agents: {e}")
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
-# @app.get("/agents", response_model=List[AgentResponse])
-# async def get_agents():
-#     """Get all available agents"""
-#     try:
-#         agents = config_manager.list_agents()
-#
-#         response_agents = []
-#         for agent in agents:
-#             response_agents.append(AgentResponse(
-#                 id=agent["name"],
-#                 name=agent["name"],
-#                 personality=agent.get("tone", "friendly"),
-#                 voice_model=agent.get("voice_id", "default"),
-#                 description=f"A {agent.get('tone', 'friendly')} AI assistant interested in {', '.join(agent.get('interests', ['general topics']))}",
-#                 created_at=agent.get("created_at", datetime.now().isoformat())
-#             ))
-        
-#         return response_agents
-    
-#     except Exception as e:
-#         logger.error(f"Error getting agents: {e}")
-#         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
- # Add this to your FastAPI server (universal_api_server_complete.py)
-   
+ 
 @app.post("/api/agents/upload-voice")
 async def upload_voice_for_cloning(file: UploadFile = File(...)):
     """Handle voice file upload for cloning"""
@@ -483,22 +406,41 @@ async def voice_chat(
 ):
     """Handle voice chat with agent"""
     try:
-        # Save uploaded audio
-        audio_path = f"temp_voice_input_{agent_id}_{int(time.time())}.wav"
-        with open(audio_path, "wb") as buffer:
-            shutil.copyfileobj(audio.file, buffer)
+        # # Save uploaded audio
+        # audio_path = f"temp_voice_input_{agent_id}_{int(time.time())}.wav"
+        # with open(audio_path, "wb") as buffer:
+        #     shutil.copyfileobj(audio.file, buffer)
         
-        # Convert speech to text
+        # # Convert speech to text
+        # recognizer = sr.Recognizer()
+        
+        # with sr.AudioFile(audio_path) as source:
+        #     audio_data = recognizer.record(source)
+        #     user_text = recognizer.recognize_google(audio_data)
+        # Read raw audio bytes
+        raw_audio = await audio.read()
+
+        # Convert to PCM WAV format
+        try:
+            audio_path = convert_to_pcm16k(raw_audio)
+        except ValueError as e:
+            logger.error(f"Audio conversion failed: {e}")
+            raise HTTPException(status_code=400, detail="Invalid audio format. Please upload WAV/MP3/OGG.")
+
+        # Speech recognition
         recognizer = sr.Recognizer()
-        
         with sr.AudioFile(audio_path) as source:
             audio_data = recognizer.record(source)
             user_text = recognizer.recognize_google(audio_data)
+
+        # Cleanup converted file
+        os.remove(audio_path)
+
         
         logger.info(f"🎤 User said: {user_text}")
         
         # Get agent from config_manager
-        agent_data = None
+        agent_data = config_manager.load_agent(agent_id)
         agents_list = config_manager.list_agents()
         for agent in agents_list:
             if agent["name"] == agent_id:
@@ -509,7 +451,8 @@ async def voice_chat(
             raise HTTPException(status_code=404, detail="Agent not found")
         
         # Create UniversalAgent instance for processing
-        universal_agent = UniversalAgent(agent_data)
+        universal_agent = get_or_create_agent(agent_id)  # ✅ safe and clean
+
         response_text = universal_agent.process_message(user_text)
         
         logger.info(f"🤖 Agent response: {response_text}")

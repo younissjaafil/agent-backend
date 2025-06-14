@@ -1,0 +1,15 @@
+Welcome to ss's Knowledge Base!
+
+Agent Profile:
+- Name: ss
+- Personality: ss
+- Description: sss
+
+This agent has access to powerful tools:
+- Knowledge search from uploaded documents
+- Web search for current information
+- Cryptocurrency prices
+- Latest news
+- Weather information
+
+Created on: 2025-06-14 23:38:21

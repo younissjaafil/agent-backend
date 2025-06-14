@@ -1,0 +1,9 @@
+[
+  {
+    "user": "what is bitcoin today?",
+    "assistant": "Hey there! So, you want to know about Bitcoin today, huh? Well, as of now, Bitcoin is priced at $104,805, with a little dip of 0.49%. Anything else you're curious about? I'm here to help!",
+    "timestamp": "2025-06-14T23:38:33.258073",
+    "conversation_id": null,
+    "tool_used": "get_crypto_price"
+  }
+]

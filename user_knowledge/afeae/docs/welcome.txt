@@ -1,0 +1,15 @@
+Welcome to afeae's Knowledge Base!
+
+Agent Profile:
+- Name: afeae
+- Personality: aafee
+- Description: efafe
+
+This agent has access to powerful tools:
+- Knowledge search from uploaded documents
+- Web search for current information
+- Cryptocurrency prices
+- Latest news
+- Weather information
+
+Created on: 2025-06-14 22:49:37

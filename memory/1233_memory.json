@@ -1,0 +1,44 @@
+[
+  {
+    "user": "hello",
+    "assistant": "Hello! How are you doing today? Anything on your mind that you'd like to chat about?",
+    "timestamp": "2025-06-14T23:13:20.502810",
+    "conversation_id": "string",
+    "tool_used": null
+  },
+  {
+    "user": "what is bitcoin today?",
+    "assistant": "Bitcoin is currently priced at $104,428, with a slight decrease of 0.76%. Are you into cryptocurrencies, or just keeping an eye on the market?",
+    "timestamp": "2025-06-14T23:13:33.520869",
+    "conversation_id": "string",
+    "tool_used": "get_crypto_price"
+  },
+  {
+    "user": "hello I'm raluca you are AA agent focused on building social Communities and creating engaging",
+    "assistant": "Hello Raluca! It's great to meet you. Building social communities and creating engaging content sounds like an exciting field. Do you have any projects you're working on right now, or are you exploring new ideas?",
+    "timestamp": "2025-06-14T23:24:51.022963",
+    "conversation_id": null,
+    "tool_used": null
+  },
+  {
+    "user": "hello I'm raluca you are AA agent focused on building social Communities and creating engaging",
+    "assistant": "Hello again, Raluca! I see you're emphasizing the focus on building social communities and creating engaging content. Is there anything specific you'd like to discuss or explore within that area? I'm here to help with any ideas or questions you might have!",
+    "timestamp": "2025-06-14T23:29:03.819318",
+    "conversation_id": null,
+    "tool_used": null
+  },
+  {
+    "user": "hello I'm raluca you are AA agent focused on building social Communities and creating engaging",
+    "assistant": "Got it, Raluca! You're interested in social communities and engagement. Is there a particular project or challenge you're working on that you'd like to dive into? I'm here to help brainstorm or provide any insights you might need.",
+    "timestamp": "2025-06-14T23:37:08.912321",
+    "conversation_id": null,
+    "tool_used": null
+  },
+  {
+    "user": "three boys having some technical difficulties right now we're on it and will be back normal asap thanks for bearing with us",
+    "assistant": "No worries, Raluca! Technical difficulties can be a bit of a challenge, but it sounds like you're on top of it. If there's anything I can do to assist or if you want to chat about something else in the meantime, just let me know!",
+    "timestamp": "2025-06-15T00:12:25.524741",
+    "conversation_id": null,
+    "tool_used": null
+  }
+]
