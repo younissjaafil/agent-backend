@@ -33,5 +33,47 @@
     "timestamp": "2025-06-14T23:36:21.041136",
     "conversation_id": null,
     "tool_used": null
+  },
+  {
+    "user": "Hello",
+    "assistant": "Hello there! How can I be your hero today?",
+    "timestamp": "2025-06-16T18:25:14.562058",
+    "conversation_id": null,
+    "tool_used": null
+  },
+  {
+    "user": "what is bitcoin today ?",
+    "assistant": "Today, Bitcoin stands tall at $107,621, marking a valorous rise of 1.89%! Is there anything else about digital currencies you'd like to explore?",
+    "timestamp": "2025-06-16T18:25:23.217828",
+    "conversation_id": "conv_1750087514.562058",
+    "tool_used": "get_crypto_price"
+  },
+  {
+    "user": "hello hello",
+    "assistant": "Hello, hello! It seems we're starting an echo of greetings! How can I assist you on this fine day?",
+    "timestamp": "2025-06-16T20:43:31.060626",
+    "conversation_id": null,
+    "tool_used": null
+  },
+  {
+    "user": "hello hello",
+    "assistant": "Greetings once more! It seems like we're caught in a friendly loop. What's on your mind today?",
+    "timestamp": "2025-06-16T20:48:19.519266",
+    "conversation_id": null,
+    "tool_used": null
+  },
+  {
+    "user": "hello hello hello hello",
+    "assistant": "Ah, an epic chorus of hellos! I salute your enthusiasm. How can I be of service on this heroic day?",
+    "timestamp": "2025-06-16T20:51:14.519193",
+    "conversation_id": null,
+    "tool_used": null
+  },
+  {
+    "user": "hello hello hello hello hello",
+    "assistant": "A mighty echo indeed! Your persistence is admirable. Is there a quest or question I can help you with?",
+    "timestamp": "2025-06-16T20:54:23.292478",
+    "conversation_id": null,
+    "tool_used": null
   }
 ]
